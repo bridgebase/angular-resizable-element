@@ -79,7 +79,8 @@ function getNewBoundingRectangle(
 
 function getElementRect(
   element: ElementRef,
-  ghostElementPositioning: string
+  ghostElementPositioning: string,
+  scale = 1.0
 ): BoundingRectangle {
   let translateX = 0;
   let translateY = 0;
@@ -114,7 +115,20 @@ function getElementRect(
         translateX
     };
   } else {
-    const boundingRect: BoundingRectangle = element.nativeElement.getBoundingClientRect();
+    const boundingClientRect = element.nativeElement.getBoundingClientRect();
+    let boundingRect: ClientRect;
+    // if (scale !== 1.00) {
+    //   boundingRect =  {
+    //     bottom: boundingClientRect.bottom * 1 / scale,
+    //     top: boundingClientRect.top,
+    //     left: boundingClientRect.left * 1 / scale,
+    //     right: boundingClientRect.right * 1 / scale,
+    //     width: boundingClientRect.width * 1 / scale,
+    //     height: boundingClientRect.height * 1 / scale
+    //   }
+    // } else {
+    boundingRect = boundingClientRect;
+    // }
     return {
       height: boundingRect.height,
       width: boundingRect.width,
@@ -153,21 +167,36 @@ function getResizeEdges({
   clientY,
   elm,
   allowedEdges,
-  cursorPrecision
+  cursorPrecision,
+  scale
 }: {
   clientX: number;
   clientY: number;
   elm: ElementRef;
   allowedEdges: Edges;
   cursorPrecision: number;
+  scale: number;
 }): Edges {
-  const elmPosition: ClientRect = elm.nativeElement.getBoundingClientRect();
+  const boundingRect = elm.nativeElement.getBoundingClientRect();
+  let elmPosition: ClientRect;
+  if (scale !== 1.0) {
+    elmPosition = {
+      bottom: boundingRect.bottom * 1 / scale,
+      top: boundingRect.top * 1 / scale,
+      left: boundingRect.left * 1 / scale,
+      right: boundingRect.right * 1 / scale,
+      width: boundingRect.width * 1 / scale,
+      height: boundingRect.height * 1 / scale
+    };
+  } else {
+    elmPosition = boundingRect;
+  }
   const edges: Edges = {};
 
   if (
     allowedEdges.left &&
     isNumberCloseTo(clientX, elmPosition.left, cursorPrecision) &&
-    isWithinBoundingY({ clientY, rect: elmPosition })
+    isWithinBoundingY({ clientY, rect: elmPosition as ClientRect })
   ) {
     edges.left = true;
   }
@@ -175,7 +204,7 @@ function getResizeEdges({
   if (
     allowedEdges.right &&
     isNumberCloseTo(clientX, elmPosition.right, cursorPrecision) &&
-    isWithinBoundingY({ clientY, rect: elmPosition })
+    isWithinBoundingY({ clientY, rect: elmPosition as ClientRect })
   ) {
     edges.right = true;
   }
@@ -183,7 +212,7 @@ function getResizeEdges({
   if (
     allowedEdges.top &&
     isNumberCloseTo(clientY, elmPosition.top, cursorPrecision) &&
-    isWithinBoundingX({ clientX, rect: elmPosition })
+    isWithinBoundingX({ clientX, rect: elmPosition as ClientRect })
   ) {
     edges.top = true;
   }
@@ -191,7 +220,7 @@ function getResizeEdges({
   if (
     allowedEdges.bottom &&
     isNumberCloseTo(clientY, elmPosition.bottom, cursorPrecision) &&
-    isWithinBoundingX({ clientX, rect: elmPosition })
+    isWithinBoundingX({ clientX, rect: elmPosition as ClientRect })
   ) {
     edges.bottom = true;
   }
@@ -245,8 +274,10 @@ function getEdgesDiff({
   newRectangle: BoundingRectangle;
 }): Edges {
   const edgesDiff: Edges = {};
-  Object.keys(edges).forEach((edge: keyof Edges) => {
-    edgesDiff[edge] = newRectangle[edge] - initialRectangle[edge];
+  Object.keys(edges).forEach((edge: string) => {
+    const typedEdge: keyof Edges = edge as keyof Edges;
+    edgesDiff[typedEdge] =
+      newRectangle[typedEdge] - initialRectangle[typedEdge];
   });
   return edgesDiff;
 }
@@ -311,6 +342,11 @@ export class ResizableDirective implements OnInit, OnDestroy {
    * Define the positioning of the ghost element (can be fixed or absolute)
    */
   @Input() ghostElementPositioning: 'fixed' | 'absolute' = 'fixed';
+
+  /**
+   * Define a scale transform of a parent element
+   */
+  @Input() scale: number = 1.0;
 
   /**
    * Called when the mouse is pressed and a resize event is about to begin. `$event` is a `ResizeEvent` object.
@@ -426,7 +462,8 @@ export class ResizableDirective implements OnInit, OnDestroy {
           clientY,
           elm: this.elm,
           allowedEdges: this.resizeEdges,
-          cursorPrecision: this.resizeCursorPrecision
+          cursorPrecision: this.resizeCursorPrecision,
+          scale: this.scale
         });
         const resizeCursors: ResizeCursors = Object.assign(
           {},
@@ -641,7 +678,8 @@ export class ResizableDirective implements OnInit, OnDestroy {
               clientY,
               elm: this.elm,
               allowedEdges: this.resizeEdges,
-              cursorPrecision: this.resizeCursorPrecision
+              cursorPrecision: this.resizeCursorPrecision,
+              scale: this.scale
             })
           );
         })
@@ -657,7 +695,8 @@ export class ResizableDirective implements OnInit, OnDestroy {
         }
         const startingRect: BoundingRectangle = getElementRect(
           this.elm,
-          this.ghostElementPositioning
+          this.ghostElementPositioning,
+          this.scale
         );
         currentResize = {
           edges,
