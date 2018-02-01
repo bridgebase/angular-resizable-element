@@ -119,15 +119,28 @@ function getElementRect(
     const boundingClientRect = element.nativeElement.getBoundingClientRect();
     let boundingRect: ClientRect;
     if (scale !== 1.0 && scaledParent) {
-      const parentClientRect = scaledParent.getBoundingClientRect();
-      boundingRect = {
-        bottom: (boundingClientRect.bottom - parentClientRect.top) * 1 / scale,
-        top: (boundingClientRect.top - parentClientRect.top) * 1 / scale,
-        left: (boundingClientRect.left - parentClientRect.left) * 1 / scale,
-        right: (boundingClientRect.right - parentClientRect.left) * 1 / scale,
-        width: boundingClientRect.width * 1 / scale,
-        height: boundingClientRect.height * 1 / scale
-      };
+      if (scaledParent) {
+        const parentClientRect = scaledParent.getBoundingClientRect();
+        boundingRect = {
+          bottom:
+            (boundingClientRect.bottom - parentClientRect.top) * 1 / scale,
+          top: (boundingClientRect.top - parentClientRect.top) * 1 / scale,
+          left: (boundingClientRect.left - parentClientRect.left) * 1 / scale,
+          right: (boundingClientRect.right - parentClientRect.left) * 1 / scale,
+          width: boundingClientRect.width * 1 / scale,
+          height: boundingClientRect.height * 1 / scale
+        };
+      } else {
+        // Allow consumers who's scaled ancestor is at 0,0 avoid passing it in
+        boundingRect = {
+          bottom: boundingClientRect.bottom * 1 / scale,
+          top: boundingClientRect.top * 1 / scale,
+          left: boundingClientRect.left * 1 / scale,
+          right: boundingClientRect.right * 1 / scale,
+          width: boundingClientRect.width * 1 / scale,
+          height: boundingClientRect.height * 1 / scale
+        };
+      }
     } else {
       boundingRect = boundingClientRect;
     }
