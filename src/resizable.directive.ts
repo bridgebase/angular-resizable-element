@@ -118,7 +118,7 @@ function getElementRect(
   } else {
     const boundingClientRect = element.nativeElement.getBoundingClientRect();
     let boundingRect: ClientRect;
-    if (scale !== 1.0 && scaledParent) {
+    if (scale !== 1.0) {
       if (scaledParent) {
         const parentClientRect = scaledParent.getBoundingClientRect();
         boundingRect = {
