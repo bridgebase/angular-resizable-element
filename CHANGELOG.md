@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.1.0"></a>
+# [2.1.0](https://github.com/mattlewis92/angular-resizable-element/compare/v2.0.0...v2.1.0) (2018-02-01)
+
+
+### Bug Fixes
+
+* actually allow users to not pass a scaled parent ([bcda38a](https://github.com/mattlewis92/angular-resizable-element/commit/bcda38a))
+* Fixing bugs with approach ([30a909f](https://github.com/mattlewis92/angular-resizable-element/commit/30a909f))
+* remove unnessary changes and parameters ([a8bbd55](https://github.com/mattlewis92/angular-resizable-element/commit/a8bbd55))
+* revert changes in /demo ([9eb50ba](https://github.com/mattlewis92/angular-resizable-element/commit/9eb50ba))
+
+
+### Features
+
+* Added scale ([3abbaa1](https://github.com/mattlewis92/angular-resizable-element/commit/3abbaa1))
+* Allow consumers with scaled ancestors at 0,0 to skip passing it in ([5e662f1](https://github.com/mattlewis92/angular-resizable-element/commit/5e662f1))
+
+
+
 <a name="2.0.0"></a>
 # [2.0.0](https://github.com/mattlewis92/angular-resizable-element/compare/v1.2.5...v2.0.0) (2017-12-26)
 
