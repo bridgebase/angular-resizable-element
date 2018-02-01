@@ -23,11 +23,6 @@
     "prettier": "prettier --write",
     "precommit": "lint-staged"
   },
-  "ngPackage": {
-    "lib": {
-      "entryFile": "src/index.ts"
-    }
-  },
   "lint-staged": {
     "{demo,src,test}/**/*.ts": [
       "npm run prettier",
@@ -106,5 +101,10 @@
     "commitizen": {
       "path": "node_modules/cz-conventional-changelog"
     }
-  }
+  },
+  "main": "bundles/angular-resizable-element.umd.js",
+  "module": "esm5/angular-resizable-element.js",
+  "es2015": "esm2015/angular-resizable-element.js",
+  "typings": "angular-resizable-element.d.ts",
+  "metadata": "angular-resizable-element.metadata.json"
 }
