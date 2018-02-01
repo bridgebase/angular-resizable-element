@@ -80,6 +80,7 @@ function getNewBoundingRectangle(
 function getElementRect(
   element: ElementRef,
   ghostElementPositioning: string,
+  scaledParent?: HTMLDivElement,
   scale = 1.0
 ): BoundingRectangle {
   let translateX = 0;
@@ -117,18 +118,19 @@ function getElementRect(
   } else {
     const boundingClientRect = element.nativeElement.getBoundingClientRect();
     let boundingRect: ClientRect;
-    // if (scale !== 1.00) {
-    //   boundingRect =  {
-    //     bottom: boundingClientRect.bottom * 1 / scale,
-    //     top: boundingClientRect.top,
-    //     left: boundingClientRect.left * 1 / scale,
-    //     right: boundingClientRect.right * 1 / scale,
-    //     width: boundingClientRect.width * 1 / scale,
-    //     height: boundingClientRect.height * 1 / scale
-    //   }
-    // } else {
-    boundingRect = boundingClientRect;
-    // }
+    if (scale !== 1.0 && scaledParent) {
+      const parentClientRect = scaledParent.getBoundingClientRect();
+      boundingRect = {
+        bottom: (boundingClientRect.bottom - parentClientRect.top) * 1 / scale,
+        top: (boundingClientRect.top - parentClientRect.top) * 1 / scale,
+        left: (boundingClientRect.left - parentClientRect.left) * 1 / scale,
+        right: (boundingClientRect.right - parentClientRect.left) * 1 / scale,
+        width: boundingClientRect.width * 1 / scale,
+        height: boundingClientRect.height * 1 / scale
+      };
+    } else {
+      boundingRect = boundingClientRect;
+    }
     return {
       height: boundingRect.height,
       width: boundingRect.width,
@@ -177,20 +179,7 @@ function getResizeEdges({
   cursorPrecision: number;
   scale: number;
 }): Edges {
-  const boundingRect = elm.nativeElement.getBoundingClientRect();
-  let elmPosition: ClientRect;
-  if (scale !== 1.0) {
-    elmPosition = {
-      bottom: boundingRect.bottom * 1 / scale,
-      top: boundingRect.top * 1 / scale,
-      left: boundingRect.left * 1 / scale,
-      right: boundingRect.right * 1 / scale,
-      width: boundingRect.width * 1 / scale,
-      height: boundingRect.height * 1 / scale
-    };
-  } else {
-    elmPosition = boundingRect;
-  }
+  const elmPosition = elm.nativeElement.getBoundingClientRect();
   const edges: Edges = {};
 
   if (
@@ -344,9 +333,14 @@ export class ResizableDirective implements OnInit, OnDestroy {
   @Input() ghostElementPositioning: 'fixed' | 'absolute' = 'fixed';
 
   /**
-   * Define a scale transform of a parent element
+   * Define a scale transform of an ancestor element
    */
   @Input() scale: number = 1.0;
+
+  /**
+   * A reference to the HTMLElement ancestor element
+   */
+  @Input() scaledParent: HTMLDivElement;
 
   /**
    * Called when the mouse is pressed and a resize event is about to begin. `$event` is a `ResizeEvent` object.
@@ -696,6 +690,7 @@ export class ResizableDirective implements OnInit, OnDestroy {
         const startingRect: BoundingRectangle = getElementRect(
           this.elm,
           this.ghostElementPositioning,
+          this.scaledParent,
           this.scale
         );
         currentResize = {

@@ -38,7 +38,8 @@ import { ResizeEvent } from './../src';
         [enableGhostResize]="true"
         [resizeSnapGrid]="{left: 50, right: 50}"
         (resizeEnd)="onResizeEnd($event)"
-        [scale]="0.75">
+        [scale]="0.75"
+        [scaledParent]="scaledParent">
         <img
           src="http://i.imgur.com/eqzz2dl.gif"
           class="resize-handle"
@@ -50,7 +51,7 @@ import { ResizeEvent } from './../src';
 })
 export class DemoComponent {
   public style: object = {};
-  public scaledParent = document.getElementById('#demo');
+  public scaledParent = document.getElementById('demo');
 
   validate(event: ResizeEvent): boolean {
     const MIN_DIMENSIONS_PX: number = 50;
