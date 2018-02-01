@@ -182,23 +182,21 @@ function getResizeEdges({
   clientY,
   elm,
   allowedEdges,
-  cursorPrecision,
-  scale
+  cursorPrecision
 }: {
   clientX: number;
   clientY: number;
   elm: ElementRef;
   allowedEdges: Edges;
   cursorPrecision: number;
-  scale: number;
 }): Edges {
-  const elmPosition = elm.nativeElement.getBoundingClientRect();
+  const elmPosition: ClientRect = elm.nativeElement.getBoundingClientRect();
   const edges: Edges = {};
 
   if (
     allowedEdges.left &&
     isNumberCloseTo(clientX, elmPosition.left, cursorPrecision) &&
-    isWithinBoundingY({ clientY, rect: elmPosition as ClientRect })
+    isWithinBoundingY({ clientY, rect: elmPosition })
   ) {
     edges.left = true;
   }
@@ -206,7 +204,7 @@ function getResizeEdges({
   if (
     allowedEdges.right &&
     isNumberCloseTo(clientX, elmPosition.right, cursorPrecision) &&
-    isWithinBoundingY({ clientY, rect: elmPosition as ClientRect })
+    isWithinBoundingY({ clientY, rect: elmPosition })
   ) {
     edges.right = true;
   }
@@ -214,7 +212,7 @@ function getResizeEdges({
   if (
     allowedEdges.top &&
     isNumberCloseTo(clientY, elmPosition.top, cursorPrecision) &&
-    isWithinBoundingX({ clientX, rect: elmPosition as ClientRect })
+    isWithinBoundingX({ clientX, rect: elmPosition })
   ) {
     edges.top = true;
   }
@@ -222,7 +220,7 @@ function getResizeEdges({
   if (
     allowedEdges.bottom &&
     isNumberCloseTo(clientY, elmPosition.bottom, cursorPrecision) &&
-    isWithinBoundingX({ clientX, rect: elmPosition as ClientRect })
+    isWithinBoundingX({ clientX, rect: elmPosition })
   ) {
     edges.bottom = true;
   }
@@ -469,8 +467,7 @@ export class ResizableDirective implements OnInit, OnDestroy {
           clientY,
           elm: this.elm,
           allowedEdges: this.resizeEdges,
-          cursorPrecision: this.resizeCursorPrecision,
-          scale: this.scale
+          cursorPrecision: this.resizeCursorPrecision
         });
         const resizeCursors: ResizeCursors = Object.assign(
           {},
@@ -685,8 +682,7 @@ export class ResizableDirective implements OnInit, OnDestroy {
               clientY,
               elm: this.elm,
               allowedEdges: this.resizeEdges,
-              cursorPrecision: this.resizeCursorPrecision,
-              scale: this.scale
+              cursorPrecision: this.resizeCursorPrecision
             })
           );
         })
