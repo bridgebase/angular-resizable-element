@@ -121,6 +121,7 @@ function getElementRect(
     if (scale !== 1.0) {
       if (scaledParent) {
         const parentClientRect = scaledParent.getBoundingClientRect();
+        console.log(parentClientRect);
         boundingRect = {
           bottom:
             (boundingClientRect.bottom - parentClientRect.top) * 1 / scale,
@@ -144,6 +145,7 @@ function getElementRect(
     } else {
       boundingRect = boundingClientRect;
     }
+    console.log(boundingClientRect, boundingRect);
     return {
       height: boundingRect.height,
       width: boundingRect.width,
@@ -702,6 +704,7 @@ export class ResizableDirective implements OnInit, OnDestroy {
           this.scaledParent,
           this.scale
         );
+        console.log(this.scaledParent);
         currentResize = {
           edges,
           startingRect,

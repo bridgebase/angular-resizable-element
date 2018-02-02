@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { ResizeEvent } from './../src';
+import { Element } from '@angular/compiler';
 
 @Component({
   selector: 'mwl-demo',
@@ -27,7 +28,7 @@ import { ResizeEvent } from './../src';
   `
   ],
   template: `
-    <div class="text-center">
+    <div  #test class="text-center" style="transform: scale(0.7);' transform-origin: 0 0;">
       <h1>Drag and pull the edges of the rectangle</h1>
       <div
         class="rectangle"
@@ -37,7 +38,9 @@ import { ResizeEvent } from './../src';
         [resizeEdges]="{bottom: true, right: true, top: true, left: true}"
         [enableGhostResize]="true"
         [resizeSnapGrid]="{left: 50, right: 50}"
-        (resizeEnd)="onResizeEnd($event)">
+        (resizeEnd)="onResizeEnd($event)"
+        [scale]="0.7"
+        [scaledParent]="lol">
         <img
           src="http://i.imgur.com/eqzz2dl.gif"
           class="resize-handle"
@@ -49,6 +52,12 @@ import { ResizeEvent } from './../src';
 })
 export class DemoComponent {
   public style: object = {};
+  @ViewChild('test') test: ElementRef;
+  public lol: HTMLElement;
+
+  ngOnInit() {
+    this.lol = this.test.nativeElement;
+  }
 
   validate(event: ResizeEvent): boolean {
     const MIN_DIMENSIONS_PX: number = 50;
